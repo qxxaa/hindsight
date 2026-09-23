@@ -265,6 +265,20 @@ bank_id = "acme-billing"
 
 The lookup stops at the repository root. Only `bank_id` is read.
 
+### Mental Model
+
+| Key | Default | Description |
+|-----|---------|-------------|
+| `mental_model_id` | — | ID of an existing mental model to include in the system prompt at session start. Leave empty to disable. |
+
+When set, the mental model's content is read once during initialization (a stored-document read, no LLM call) and included in the system prompt after the memory status block. This gives the agent stable, synthesized context from the first turn, complementing per-turn recall.
+
+The content is not refreshed mid-session, so the system prompt stays identical and provider prompt caching keeps working; a refreshed model is picked up by the next session. If the model does not exist or the server is unreachable, the system prompt is left unchanged and a warning is logged.
+
+In `local_embedded` mode the model is read only if the embedded daemon is already running when the session starts. A session that starts while the daemon is still starting (for example on first launch) goes without it, and the next session picks it up.
+
+Create the mental model in the configured bank first, via the dashboard, CLI or API. See [Mental Models](/developer/api/mental-models).
+
 ### Recall
 
 | Key | Default | Description |
